@@ -1,32 +1,20 @@
-// extern crate regex;
+extern crate regex;
 
-// use regex::Regex;
+use regex::Regex;
 use std::cmp;
 use std::collections::HashSet;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 
+mod util;
+
 fn main() {
   day_1_a();
   day_1_b();
   day_2_a();
   day_2_b();
-}
-
-fn read_file_to_string(name: &str) -> String {
-  let path = Path::new(name);
-
-  let mut file = match File::open(&path) {
-    Err(why) => panic!(why),
-    Ok(file) => file,
-  };
-
-  let mut s = String::new();
-  match file.read_to_string(&mut s) {
-    Err(why) => panic!(why),
-    Ok(_) => return s,
-  }
+  day_3_a();
 }
 
 fn day_1_a() {
@@ -96,7 +84,7 @@ fn day_1_b() {
 }
 
 fn day_2_a() {
-  let s = read_file_to_string("input2");
+  let s = util::read_file_to_string("input2");
 
   let mut twos = 0;
   let mut threes = 0;
@@ -130,7 +118,7 @@ fn day_2_a() {
 }
 
 fn day_2_b() {
-  let s = read_file_to_string("input2");
+  let s = util::read_file_to_string("input2");
   let split = s.split_whitespace();
   let mut copied: Vec<&str> = Vec::new();
 
@@ -164,4 +152,39 @@ fn only_one_difference(s1: &str, s2: &str) -> bool {
   }
 
   return diff == 1;
+}
+
+/*
+A claim like #123 @ 3,2: 5x4 means that claim ID 123 specifies a rectangle 3 inches from the left edge, 
+2 inches from the top edge, 5 inches wide, and 4 inches tall. 
+How many square inches of fabric are within two or more claims?
+*/
+fn day_3_a() {
+  let s = util::read_file_to_string("input3");
+  let split = s.split("\n");
+  let reg =
+    Regex::new("#(?P<id>\\d+) @ (?P<x>\\d+),(?P<y>\\d+): (?P<w>\\d+)x(?P<h>\\d+)$").unwrap();
+  for line in split {
+    let claim = reg.captures(&line);
+    match claim {
+      Some(c) => {
+        let id = &c["id"];
+        let x = &c["x"];
+        let y = &c["y"];
+        let w = &c["w"];
+        let h = &c["h"];
+
+        println!("{} {} {} {} {}", id, x, y, w, h);
+
+        // TODO:
+        // Convert strings to usize
+        // Find and list all claimed squares
+        // If claimed a second time, add it to a hash set
+        // Count the hash set
+      }
+      None => {
+        println!("Non-matching line: {}", line);
+      }
+    }
+  }
 }
