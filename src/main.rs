@@ -32,7 +32,7 @@ fn day_1_a() {
     Ok(_) => {
       let mut result: i32 = 0;
       let split = s.split_whitespace();
-      for mut line in split {
+      for line in split {
         // println!("{}", line);
         result += match i32::from_str_radix(line, 10) {
           Ok(x) => x,
@@ -64,7 +64,7 @@ fn day_1_b() {
       let mut finished = false;
       while !finished {
         let split = s.split_whitespace();
-        for mut line in split {
+        for line in split {
           // println!("{}", line);
           result += match i32::from_str_radix(line, 10) {
             Ok(x) => x,
@@ -90,12 +90,12 @@ fn day_2_a() {
   let mut threes = 0;
 
   let split = s.split_whitespace();
-  for mut line in split {
+  for line in split {
     let mut two = false;
     let mut three = false;
 
     for c in line.chars() {
-      let mut counter: Vec<&str> = line.matches(c).collect();
+      let counter: Vec<&str> = line.matches(c).collect();
       // println!("{:?}", &counter);
       match counter.len() {
         2 => {
@@ -142,7 +142,7 @@ fn only_one_difference(s1: &str, s2: &str) -> bool {
   let length = cmp::min(c1.len(), c2.len());
   let mut diff = 0;
 
-  for mut i in 0..length {
+  for i in 0..length {
     if c1[i] != c2[i] {
       diff = diff + 1;
     }
