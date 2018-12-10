@@ -1,10 +1,16 @@
+use chrono;
 use util;
 
 pub fn a() {
   let s = util::read_file_to_string("input4");
-  let split = s.split_whitespace();
+  let mut split = s.split('\n');
 
-  for line in split {}
+  // split.sort(); MAKE THIS WORK
+
+  'next_line: for line in split {
+    let timestamp = &line[1..17]; // "1518-05-16 23:57"
+    let operation = &line[19..24]; // "Guard", "falls" or "wakes"
+  }
 
   //let mut entries: Vec<(DateTime)> = Vec::new();
 
