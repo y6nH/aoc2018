@@ -1,5 +1,5 @@
 use std::cmp;
-use util;
+use crate::util;
 
 pub fn a() {
   let s = util::read_file_to_string("input2");
