@@ -1,11 +1,12 @@
 extern crate chrono;
 extern crate regex;
+extern crate time;
 
-mod util;
 mod day1;
 mod day2;
 mod day3;
 mod day4;
+mod util;
 
 fn main() {
   day1::a();
@@ -15,4 +16,3 @@ fn main() {
   day3::a();
   day4::a();
 }
-

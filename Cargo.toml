@@ -2,8 +2,9 @@
 name = "aoc"
 version = "0.1.0"
 authors = ["y6nH"]
-edition="2018"
+#edition="2018"
 
 [dependencies]
 regex = "1"
 chrono = "0.4"
+time = "0.1"

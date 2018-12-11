@@ -1,5 +1,5 @@
-use std::cmp;
 use crate::util;
+use std::cmp;
 
 pub fn a() {
   let s = util::read_file_to_string("input2");
@@ -8,12 +8,12 @@ pub fn a() {
   let mut threes = 0;
 
   let split = s.split_whitespace();
-  for mut line in split {
+  for line in split {
     let mut two = false;
     let mut three = false;
 
     for c in line.chars() {
-      let mut counter: Vec<&str> = line.matches(c).collect();
+      let counter: Vec<&str> = line.matches(c).collect();
       // println!("{:?}", &counter);
       match counter.len() {
         2 => {
@@ -60,7 +60,7 @@ fn only_one_difference(s1: &str, s2: &str) -> bool {
   let length = cmp::min(c1.len(), c2.len());
   let mut diff = 0;
 
-  for mut i in 0..length {
+  for i in 0..length {
     if c1[i] != c2[i] {
       diff = diff + 1;
     }
