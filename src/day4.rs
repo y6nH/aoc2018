@@ -1,6 +1,5 @@
 use crate::util;
 use chrono::prelude::*;
-use std::cmp;
 use std::collections::HashMap;
 use time;
 
@@ -32,7 +31,7 @@ pub fn a() {
   let mut sleep_by_minute = [0; 60];
   let mut sleep_start: DateTime<Utc> = Utc::now();
 
-  for event in timeline {
+  for event in &timeline {
     if event.2 == "falls" {
       match Utc.datetime_from_str(event.0, "%Y-%m-%d %H:%M") {
         Ok(d) => sleep_start = d,
@@ -44,10 +43,6 @@ pub fn a() {
           let guard_id = event.1;
           let sleep_end: DateTime<Utc> = d;
           let sleep_time = sleep_end - sleep_start;
-
-          for m in sleep_start.minute()..sleep_end.minute() {
-            sleep_by_minute[m as usize] += 1;
-          }
 
           // If guard already has sleep time logged, remove, add and reinsert.
           match guard_sleep_time.remove(guard_id) {
@@ -65,8 +60,38 @@ pub fn a() {
   }
 
   let top_sleeper = guard_sleep_time.iter().max_by(|a, b| a.1.cmp(b.1)).unwrap();
+  let top_sleeper_id: usize = top_sleeper.0.parse().unwrap();
 
+  // This is a long way round... because I answered the wrong question at first
+  for event in timeline.iter().filter(|a| &a.1 == top_sleeper.0) {
+    if event.2 == "falls" {
+      match Utc.datetime_from_str(event.0, "%Y-%m-%d %H:%M") {
+        Ok(d) => sleep_start = d,
+        Err(e) => println!("{}: {}", e, event.0),
+      }
+    } else {
+      match Utc.datetime_from_str(event.0, "%Y-%m-%d %H:%M") {
+        Ok(d) => {
+          let sleep_end: DateTime<Utc> = d;
+
+          for m in sleep_start.minute()..sleep_end.minute() {
+            sleep_by_minute[m as usize] += 1;
+          }
+        }
+        Err(e) => println!("{}: {}", e, event.0),
+      }
+    }
+  }
+
+  let most_sleep = sleep_by_minute.iter().max().unwrap();
+
+  let sleepiest_minute = sleep_by_minute
+    .iter()
+    .position(|&x| &x == most_sleep)
+    .unwrap();
   // This is the answer to the wrong question...
   println!("Longest sleep: {:?}", longest_sleep);
   println!("Guard sleeping longest: {:?}", top_sleeper);
+  println!("Sleepiest minute: {}", sleepiest_minute);
+  println!("4A: {}", sleepiest_minute * top_sleeper_id);
 }
