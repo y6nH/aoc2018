@@ -4,13 +4,19 @@ pub fn a() {
   let mut s: String = util::read_file_to_string("input5");
   unsafe {
     let bytes = s.as_mut_vec().to_vec();
-    let chomped = chomp_bytes(bytes);
-    println!("5a: {}", chomped.len());
+    let collapsed = collapse_bytes(bytes);
+    println!("5a: {}", collapsed.len());
     //println!("{}", String::from_utf8(chomped).unwrap());
   }
 }
 
-fn chomp_bytes(bytes: Vec<u8>) -> Vec<u8> {
+pub fn b() {
+  let mut s: String = util::read_file_to_string("input5");
+  // Find the smallest collapsed size resulting from removing one type of unit
+
+}
+
+fn collapse_bytes(bytes: Vec<u8>) -> Vec<u8> {
   let l = bytes.len();
   let mut result: Vec<u8> = Vec::new();
   let mut maybe_ok: u8 = bytes[0];
@@ -39,6 +45,6 @@ fn chomp_bytes(bytes: Vec<u8>) -> Vec<u8> {
     return result;
   } else {
     // println!("Length: {}", result.len());
-    return chomp_bytes(result);
+    return collapse_bytes(result);
   }
 }
