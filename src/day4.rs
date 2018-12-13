@@ -1,10 +1,16 @@
 use crate::util;
 use chrono::prelude::*;
 use std::collections::HashMap;
+use std::collections::HashSet;
 use time;
 
 /*
-Find the guard that has the most minutes asleep. What minute does that guard spend asleep the most?
+This one is a mess. It could be rewritten to be much shorter and more efficient.
+
+A: Find the guard that has the most minutes asleep. What minute does that guard spend asleep the most?
+What is the ID of the guard you chose multiplied by the minute you chose?
+
+B: Of all guards, which guard is most frequently asleep on the same minute?
 What is the ID of the guard you chose multiplied by the minute you chose?
 */
 
@@ -13,6 +19,7 @@ pub fn a() {
   let mut sorted: Vec<&str> = s.lines().collect();
   let mut current_id: &str = "?";
   let mut timeline: Vec<(&str, &str, &str)> = Vec::new();
+  let mut guard_ids: HashSet<&str> = HashSet::new();
 
   sorted.sort();
 
@@ -21,6 +28,8 @@ pub fn a() {
     let operation = &line[19..24]; // "Guard", "falls" or "wakes"
     if operation == "Guard" {
       current_id = &line[26..30]; // Guard ID, may overflow a bit, but will get the answer
+      let num_id: Vec<&str> = current_id.split_whitespace().collect();
+      guard_ids.insert(num_id[0]);
     } else {
       timeline.push((timestamp, &current_id, operation))
     }
@@ -30,6 +39,7 @@ pub fn a() {
   let mut longest_sleep: (&str, chrono::Duration) = ("?", time::Duration::zero());
   let mut sleep_by_minute = [0; 60];
   let mut sleep_start: DateTime<Utc> = Utc::now();
+  let mut sleep_by_guard_by_minute: Vec<(&str, [usize; 60])> = Vec::new();
 
   for event in &timeline {
     if event.2 == "falls" {
@@ -59,6 +69,44 @@ pub fn a() {
     }
   }
 
+  for id in guard_ids {
+    let mut sleep_log = [0; 60];
+    for event in timeline.iter().filter(|a| &a.1 == &id) {
+      if event.2 == "falls" {
+        match Utc.datetime_from_str(event.0, "%Y-%m-%d %H:%M") {
+          Ok(d) => sleep_start = d,
+          Err(e) => println!("{}: {}", e, event.0),
+        }
+      } else {
+        match Utc.datetime_from_str(event.0, "%Y-%m-%d %H:%M") {
+          Ok(d) => {
+            let sleep_end: DateTime<Utc> = d;
+            for m in sleep_start.minute()..sleep_end.minute() {
+              sleep_log[m as usize] += 1;
+            }
+          }
+          Err(e) => println!("{}: {}", e, event.0),
+        }
+      }
+    }
+
+    sleep_by_guard_by_minute.push((&id, sleep_log));
+  }
+
+  let top_guard_and_minute = sleep_by_guard_by_minute
+    .iter()
+    .max_by(|&x, &y| {
+      x.1
+        .iter()
+        .max_by(|&v, &w| v.cmp(w))
+        .cmp(&y.1.iter().max_by(|&v, &w| v.cmp(w)))
+    })
+    .unwrap();
+
+  let tgm_guard : usize = top_guard_and_minute.0.parse().unwrap();
+  let tgm_times = top_guard_and_minute.1.iter().max().unwrap();
+  let tgm_minute = top_guard_and_minute.1.iter().position(|m| m == tgm_times).unwrap();
+
   let top_sleeper = guard_sleep_time.iter().max_by(|a, b| a.1.cmp(b.1)).unwrap();
   let top_sleeper_id: usize = top_sleeper.0.parse().unwrap();
 
@@ -85,13 +133,18 @@ pub fn a() {
 
   let most_sleep = sleep_by_minute.iter().max().unwrap();
 
+  // sleepiest minute of the sleepiest guard
   let sleepiest_minute = sleep_by_minute
     .iter()
     .position(|&x| &x == most_sleep)
     .unwrap();
-  // This is the answer to the wrong question...
+  // Some answers to the wrong questions...
   println!("Longest sleep: {:?}", longest_sleep);
   println!("Guard sleeping longest: {:?}", top_sleeper);
   println!("Sleepiest minute: {}", sleepiest_minute);
   println!("4A: {}", sleepiest_minute * top_sleeper_id);
+  println!(
+    "4B: {} * {} = {}",
+    tgm_guard, tgm_minute, tgm_guard * tgm_minute
+  );
 }
