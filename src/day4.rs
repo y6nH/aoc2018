@@ -139,10 +139,10 @@ pub fn a() {
     .position(|&x| &x == most_sleep)
     .unwrap();
   // Some answers to the wrong questions...
-  println!("Longest sleep: {:?}", longest_sleep);
-  println!("Guard sleeping longest: {:?}", top_sleeper);
-  println!("Sleepiest minute: {}", sleepiest_minute);
-  println!("4A: {}", sleepiest_minute * top_sleeper_id);
+  // println!("Longest sleep: {:?}", longest_sleep);
+  // println!("Guard sleeping longest: {:?}", top_sleeper);
+  // println!("Sleepiest minute: {}", sleepiest_minute);
+  println!("4A: {} * {} = {}", sleepiest_minute, top_sleeper_id, sleepiest_minute * top_sleeper_id);
   println!(
     "4B: {} * {} = {}",
     tgm_guard, tgm_minute, tgm_guard * tgm_minute
